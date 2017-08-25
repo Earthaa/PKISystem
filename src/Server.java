@@ -117,8 +117,8 @@ public class Server extends JFrame implements ActionListener {
 									}
 									SendMessageToAll(msg);//发送给所有人
 								}else if(type.equals(MessageType.Chat)){
-										String content = msg.getContent();//msg.getFrom()+" "+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())+"\n"+msg.getContent();
-										msg.setContent(content);
+										//String content = msg.getContent();//msg.getFrom()+" "+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date())+"\n"+msg.getContent();
+										//msg.setContent(content);
 										//转发给私人
 										if(msg.getChatState().equals(ChatState.Personal)){
 											SendToPersonal(msg);
@@ -160,7 +160,7 @@ public class Server extends JFrame implements ActionListener {
 					private synchronized void SendToPersonal(Message msg)throws Exception{
 						int times=0;
 						for(UserInfo s:users){
-							if(s.getName().equals(msg.getTo())||s.getName().equals(msg.getFrom())){
+							if(s.getName().equals(msg.getTo())/*||s.getName().equals(msg.getFrom())*/){
 								ObjectOutputStream oos = new ObjectOutputStream(s.getSocket().getOutputStream());
 								oos.writeObject(msg);
 								oos.flush();

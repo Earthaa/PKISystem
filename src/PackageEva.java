@@ -13,32 +13,27 @@ public abstract class PackageEva
 	public static String PackageSend;
 	public static String PackageRecv;
 	public static String Package;
-	static String Name="CA";
+	static String Name="ZhouYi";
 	
 public static String CreatePackage(String Plain,int SendNum) throws Exception
 {
-	/*if(SendNum==0)
-		return CreatePackageToCA(Plain);*/
+	if(SendNum==0)
+		return CreatePackageToCA(Plain);
 	ToSend.SendHeader=Integer.toString(SendNum);
 	ToSend.Certifacte=RSACoder.Certificate;
 	ToSend.Sig=RSACoder.GetSig(Name, RSACoder.getPrivateKey());
 	ToSend.Plain=RSACoder.PublicEncrypt(Plain, RSACoder.getPublicKey(SendNum));
-	/*if(ToSend.Sig==null)
-		System.out.println("Sig miss");
-	if(ToSend.Certifacte==null)
-		System.out.println("cert miss");
-	if(ToSend.Plain==null)
-		System.out.println("plain miss");*/
+
 	PackageSend = ToSend.Header+ToSend.SendHeader+ToSend.Sig + ToSend.Certifacte + ToSend.Plain;
 	return PackageSend;
 }
 
-public  static String DecreatePackage(String InputStream) throws Exception
+public static String DecreatePackage(String InputStream) throws Exception
 {
 	  ToReceive.Header = InputStream.substring(0, 1);
 	  ToReceive.SendHeader=InputStream.substring(1,2);
-	  //if(ToReceive.Header=="0")
-	  		//return DecreatePackageFromCA(InputStream);
+	  if(ToReceive.Header.equals("0"))  		
+		  return DecreatePackageFromCA(InputStream);
 	  ToReceive.Sig = InputStream.substring(2, 90);
 	  ToReceive.Certifacte = InputStream.substring(90, 178);
 	  ToReceive.Plain = InputStream.substring(178, 266);
@@ -61,7 +56,7 @@ public  static String DecreatePackage(String InputStream) throws Exception
 	  }
 }
 
-public static String CreatePackageToCA(String Plain) throws Exception
+private static String CreatePackageToCA(String Plain) throws Exception
 {
 	ToSend.SendHeader="0";
 	ToSend.Sig=RSACoder.GetSig(Name, RSACoder.getPrivateKey());
@@ -70,7 +65,7 @@ public static String CreatePackageToCA(String Plain) throws Exception
 	return PackageSend;
 
 }
-public static String DecreatePackageFromCA(String InputStream) throws Exception
+private static String DecreatePackageFromCA(String InputStream) throws Exception
  {
 	 ToReceive.Header = InputStream.substring(0, 1);
 	 ToReceive.SendHeader=InputStream.substring(1,2);
@@ -92,7 +87,7 @@ public static String DecreatePackageFromCA(String InputStream) throws Exception
 	  }
 	  else 
 	  {
-		  return "Fail to Verify certificate of CA!";
+		  return "Fail to Verify certificate of CA!"; 
 	  }
   }
 }

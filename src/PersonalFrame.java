@@ -17,7 +17,7 @@ public class PersonalFrame extends JFrame implements ActionListener{
 	//Frame Name
 	private String From;
 	private String name;
-	//PersonalFrame
+	public String myword;
 	private JPanel PCenter = new JPanel();
 	private JTextArea PShowMsg = new JTextArea(10,20);
 	private JScrollPane PShowPane = new JScrollPane(PShowMsg);
@@ -85,13 +85,27 @@ public class PersonalFrame extends JFrame implements ActionListener{
 		if(Client.socket == null){
 			JOptionPane.showMessageDialog(this, "没有连接服务器或已经断开服务器");
 			return;
+			
 		}
 		
 		//发送消息
-		String content =name+"说：\n"+ PmsgInput.getText();
-		content=PackageEva.CreatePackage(content, 0);
-		/*String content = StrToBinstr(tempcontent);*/
-		if(content == null || content.trim().equals("")){
+		String content = From+"说：\n"+ PmsgInput.getText();	
+		myword = content;
+		
+		String old = PShowMsg.getText();
+		if(old.isEmpty() || old.trim().equals("")){
+			PShowMsg.setText(myword);
+			
+		}
+		else{
+			String temp = old+"\n"+myword;
+			PShowMsg.setText(temp);
+		}
+
+		Client.SendNum=Integer.parseInt(name);
+		content=PackageEva.CreatePackage(PmsgInput.getText(), Client.SendNum);
+		
+		if(content.isEmpty() || content.trim().equals("")){
 			JOptionPane.showMessageDialog(this, "不能发送空字符串");
 			return;
 		}else{
@@ -103,18 +117,14 @@ public class PersonalFrame extends JFrame implements ActionListener{
 		Client.oos.writeObject(msg);
 		Client.oos.flush();
 	}
-	public void showMsg(Message msg) throws Exception{
-		 
+	public void showMsg(Message msg) throws Exception{		 
+		
 		String content = msg.getContent();
 		content=PackageEva.DecreatePackage(content);
+		PShowMsg.setText("发送者："+msg.getFrom()+"\n"+"接收者："+msg.getTo()+"\n"+content);
 		
-		String old = PShowMsg.getText();
-		if(old == null || old.trim().equals("")){
-			PShowMsg.setText(content);
-		}else{
-			String temp = old+"\n"+content;
-			PShowMsg.setText(temp);
-		}
+		System.out.println(content);
+
 		PShowMsg.setCaretPosition(PShowMsg.getText().length());
 	}
 	public String getName(){

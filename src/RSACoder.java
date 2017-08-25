@@ -22,13 +22,12 @@ import javax.crypto.Cipher;
 
 public abstract class RSACoder {
 	public static  String Certificate = null;
-	public static int Header=0;
+	public static int Header=1;
 	public static Boolean flag=false;
 	public static int AllNum=4;
     private static PrivateKey privateKey;
-    public static String[] publicKeyString={"MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJY4OqNN0kSr79WojHwSVVvch+oaazv4QJfQ+A9HNSgxOPXUfiXB7USat7PFkMN5UHdSXyZlIt0xlAtROPcZGk0CAwEAAQ==","MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAI01Ce6LrNb8kdmjk9NJ7EgWwGLn51mf3XE4hFnNyq2WOiKK83sZjDVjIkYAFf+SpKIGohm54Jtfx54OypOtONUCAwEAAQ==","MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAIYbJMsawGSGjH69jpj0VkDEZRvX7v64DsXjZtzRjY7nnjd7xs21dRe1wxKwvughYhl8TyTeWbNhxxdEg55BfL8CAwEAAQ==","MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJZ58VkGBM8MZxLYvY/QLVQigCkIBlhGhFo7Kymu0DKyTS9vJDMllWD2JJ/yN0M6Cw3fM5Bp/lVWVMx39QZz1i8CAwEAAQ=="};  
+    public static String[] publicKeyString={"MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAJY4OqNN0kSr79WojHwSVVvch+oaazv4QJfQ+A9HNSgxOPXUfiXB7USat7PFkMN5UHdSXyZlIt0xlAtROPcZGk0CAwEAAQ==","MFwwDQYJKoZIhvcNAQEBBQADSwAwSAJBAI01Ce6LrNb8kdmjk9NJ7EgWwGLn51mf3XE4hFnNyq2WOiKK83sZjDVjIkYAFf+SpKIGohm54Jtfx54OypOtONUCAwEAAQ==","",""};  
     public static String privateKeyString="MIIBUwIBADANBgkqhkiG9w0BAQEFAASCAT0wggE5AgEAAkEAjTUJ7ous1vyR2aOT00nsSBbAYufnWZ/dcTiEWc3KrZY6IorzexmMNWMiRgAV/5KkogaiGbngm1/Hng7Kk6041QIDAQABAkBZzfGTFKHH2LmpgK7zIYB0GIQiYvpvtYxQBXGm64qK+pauioT/CR4TrGA7di3CbTBhsXKe1cGMJQdgBuKAI6gBAiEA8yGeHNg2bE41foAZ29rc+vsGPLtW7O+q+rb28abxSrUCIQCUrl5rdePUjDZDhB2YoPUIADjHJe04DocuKVbsPcVpoQIgLn3bMkDWB1fdOtdcGoJ7hzLBOpPIR358/3xFNGhr85ECIG/lErY5EO+jXitNwKBfcklFMXXfOzpW5LF+9yXwDyRBAiA4BJ9kVaajbBAxMNS/YD3fxX1kv/D7cFu6WK4SgqlYqA==";
-
     public static PublicKey[] publicKey=new PublicKey[4];
     public static Map<Integer, String> NameTable=new HashMap<Integer,String>()
     		{{
@@ -38,17 +37,18 @@ public abstract class RSACoder {
     			put(3, "TangXie");
     		}};
 
-      public static void KeyInit() throws Exception//初始化
+      public static void KeyInit() throws Exception//閸掓繂顫愰崠锟�
       {
-    	  //初始化钥匙串
+    	  //閸掓繂顫愰崠鏍寽閸栨瑤瑕�
     	  	privateKey=GeneratePrivateKey(privateKeyString);
     	  	for(int i=0;i<AllNum;i++)
     	  	{
-    	  		publicKey[i]=GeneratePublicKey(publicKeyString[i]);
+    	  		if(!publicKeyString[i].isEmpty())
+    	  			publicKey[i]=GeneratePublicKey(publicKeyString[i]);
     	  	}
     	  	flag=true;
       }
-      //将base64编码后的私钥字符串转成PublicKey实例 
+      //鐏忓摴ase64缂傛牜鐖滈崥搴ｆ畱缁変線鎸滅�涙顑佹稉鑼舵祮閹存�璾blicKey鐎圭偘绶� 
     private static PublicKey GeneratePublicKey(String publicKey) throws Exception{  
     		
         byte[ ] keyBytes=Base64.getDecoder().decode(publicKey.getBytes());  
@@ -57,7 +57,7 @@ public abstract class RSACoder {
         return keyFactory.generatePublic(keySpec);    
     }  
       
-    //将base64编码后的私钥字符串转成PrivateKey实例  
+    //鐏忓摴ase64缂傛牜鐖滈崥搴ｆ畱缁変線鎸滅�涙顑佹稉鑼舵祮閹存�璻ivateKey鐎圭偘绶�  
     private static PrivateKey GeneratePrivateKey(String privateKey) throws Exception{  
    
         byte[ ] keyBytes=Base64.getDecoder().decode(privateKey.getBytes());  
@@ -66,7 +66,7 @@ public abstract class RSACoder {
         return keyFactory.generatePrivate(keySpec);  
     }  
      
-    //公钥加密  
+    //閸忣剟鎸滈崝鐘茬槕  
     public static String PublicEncrypt(String content, PublicKey publicKey) throws Exception{  
 
     		byte[] ContentBytes=content.getBytes();
@@ -75,7 +75,7 @@ public abstract class RSACoder {
         byte[] EncryptedBytes= cipher.doFinal(ContentBytes);  
         return Base64.getEncoder().encodeToString(EncryptedBytes);
     }  
-   //私钥加密
+   //缁変線鎸滈崝鐘茬槕
      public static String PrivateEncrypt(String content,PrivateKey privatekey) throws Exception
      {
 	    	 
@@ -85,7 +85,7 @@ public abstract class RSACoder {
     	 	byte[] EncryptedBytes= cipher.doFinal(ContentBytes);  
             return Base64.getEncoder().encodeToString(EncryptedBytes);
      }
-     //公钥解密
+     //閸忣剟鎸滅憴锝呯槕
      public static String PublicDecrypt(String Encrypted, PublicKey publicKey) throws Exception{ 
     	 	
     	     Cipher cipher=Cipher.getInstance("RSA");  
@@ -93,7 +93,7 @@ public abstract class RSACoder {
          byte[] DecryptedBytes=cipher.doFinal(Base64.getDecoder().decode(Encrypted));
          return new String(DecryptedBytes);
      }  
-    //私钥解密  
+    //缁変線鎸滅憴锝呯槕  
     public static String PrivateDecrypt(String Encrypted, PrivateKey privateKey) throws Exception{ 
 
         Cipher cipher=Cipher.getInstance("RSA");  
@@ -101,14 +101,14 @@ public abstract class RSACoder {
         byte[] DecryptedBytes=cipher.doFinal(Base64.getDecoder().decode(Encrypted));
         return new String(DecryptedBytes);
     }  
-    //获取时间戳
+    //閼惧嘲褰囬弮鍫曟？閹达拷
     public static String GettimeStamp()
     {
     		Date date=new Date();
     		SimpleDateFormat df=new SimpleDateFormat("yyyyMMddhh");
     		return df.format(date);
     }
-    //签名生成
+    //缁涙儳鎮曢悽鐔稿灇
     public static String GetSig(String data,PrivateKey privatekey) throws Exception
     {
     		Signature SigFactory=Signature.getInstance("MD5withRSA");
@@ -117,7 +117,7 @@ public abstract class RSACoder {
     		byte[] signed=SigFactory.sign();
     		return new String(Base64.getEncoder().encode(signed));
     }
-    //签名验证
+    //缁涙儳鎮曟宀冪槈
     public static boolean VerifySig(int Header,String Sign,PublicKey publicKey) throws Exception
     {
     		Signature SigFactory=Signature.getInstance("MD5withRSA");
@@ -128,7 +128,7 @@ public abstract class RSACoder {
     	
     }
     /*
-    //0填充
+    //0婵夘偄鍘�
     public static String FullFill(String CipherText,int GapNum)
     {
     		if(CipherText.length()==70)
@@ -143,7 +143,7 @@ public abstract class RSACoder {
     		return CipherText;
     }*/
     
-    //生成秘钥对，备用
+    //閻㈢喐鍨氱粔姗�鎸滅�电櫢绱濇径鍥╂暏
     public static void getKeyPair(int keyLength,int PublicKeyNum) throws Exception{  
         KeyPairGenerator keyPairGenerator=KeyPairGenerator.getInstance("RSA");  
         keyPairGenerator.initialize(keyLength);        
@@ -151,19 +151,19 @@ public abstract class RSACoder {
         publicKey[PublicKeyNum]=tmpKeyPair.getPublic();
         privateKey=tmpKeyPair.getPrivate();
     }  
-    //获得私钥
+    //閼惧嘲绶辩粔渚�鎸�
     public static PrivateKey getPrivateKey() throws Exception
     {
-    		if(flag!=false)
+    		//if(flag!=false)
     			return privateKey;
-    		else
-    		{	
-    			if(flag==false)
-    				KeyInit();
-    			return privateKey;
-    		}
+    		//else
+    		//{	
+    		//	if(flag==false)
+    			//	KeyInit();
+    		//	return privateKey;
+    		//}
     }
-    //获得公钥
+    //閼惧嘲绶遍崗顒勬寽
     public static PublicKey getPublicKey(int num) throws Exception
     {
     		if(num<AllNum&&publicKey[num]!=null)
@@ -179,7 +179,7 @@ public abstract class RSACoder {
     				return publicKey[num];   			
     		}
     }
-    //证书的验证
+    //鐠囦椒鍔熼惃鍕崣鐠囷拷
     public static boolean VerifyCert(String Cert,String Header) throws Exception
     {
     		String myCert=PublicDecrypt(Cert, getPublicKey(0));
@@ -190,7 +190,7 @@ public abstract class RSACoder {
     		else 
     			return false;
     }
-    //0截断
+    //0閹搭亝鏌�
     /*public static String Truncate(String Originial,int Gap)
     {
     		return Originial.substring(0,Originial.length()-Gap);
